@@ -64,8 +64,13 @@ function json2html(json, options) {
       for (const key in json) {
         if (json.hasOwnProperty(key)) {
           html += `<li data-key-type="object" data-key="${key}">`;
-          const keyRepr = options.outputWithQuotes
-            ? `<span class="json-string">"${key}"</span>` : key;
+
+          let keyRepr = key;
+
+          // Quote keys if needed
+          if (options.outputWithQuotes) {
+            keyRepr = options.wrapOutputAsStrings ? `<span class="json-string">"${key}"</span>` : `"${key}"`;
+          }
 
           // Add toggle button if item is collapsable
           if (isCollapsable(json[key])) {
@@ -77,7 +82,9 @@ function json2html(json, options) {
           html += `: ${json2html(json[key], options)}`;
           // Add comma if item is not last
           keyCount -= 1;
-          if (keyCount > 0) { html += ','; }
+          if (keyCount > 0) {
+            html += ',';
+          }
           html += '</li>';
         }
       }
@@ -100,7 +107,7 @@ function off(event, elem, callback, capture) {
   let captureIntern = capture;
   let callbackIntern = callback;
   let elemIntern = elem;
-  if (typeof (elem) === 'function') {
+  if (typeof elem === 'function') {
     captureIntern = callback;
     callbackIntern = elem;
     elemIntern = window;
@@ -134,7 +141,7 @@ function siblings(el, sel, callback) {
   }
 
   // If a callback is passed, call it on each sibs
-  if (callback && typeof (callback) === 'function') {
+  if (callback && typeof callback === 'function') {
     for (let i = 0; i < sibs.length; i += 1) {
       callback(sibs[i]);
     }
@@ -185,7 +192,7 @@ function isHidden(elem) {
   const width = elem.offsetWidth;
   const height = elem.offsetHeight;
 
-  return ((width === 0 && height === 0) || window.getComputedStyle(elem).display === 'none');
+  return (width === 0 && height === 0) || window.getComputedStyle(elem).display === 'none';
 }
 
 /**
@@ -197,7 +204,7 @@ function isHidden(elem) {
 function getParents(elem, sel) {
   const result = [];
   for (let p = elem && elem.parentElement; p; p = p.parentElement) {
-    if ( typeof sel === 'string' && p.matches(sel)) {
+    if (typeof sel === 'string' && p.matches(sel)) {
       result.push(p);
     }
   }
@@ -210,19 +217,22 @@ function HandlerEventToggle(elm, event) {
 
   // Fetch every json-dict and json-array to toggle them
   const subTarget = siblings(elm, 'ul.json-dict, ol.json-array', (el) => {
-    el.style.display = (el.style.display === '' || el.style.display === 'block') ? 'none' : 'block';
+    el.style.display = el.style.display === '' || el.style.display === 'block' ? 'none' : 'block';
   });
 
   // ForEach subtarget, previous siblings return array so we parse it
   for (let i = 0; i < subTarget.length; i += 1) {
     if (!isHidden(subTarget[i])) {
       // Parse every siblings with '.json-placehoder' and remove them (previous add by else)
-      siblings(subTarget[i], '.json-placeholder', el => el.parentNode.removeChild(el));
+      siblings(subTarget[i], '.json-placeholder', (el) => el.parentNode.removeChild(el));
     } else {
       // count item in object / array
-      const childs = subTarget[i].children; let count = 0;
+      const childs = subTarget[i].children;
+      let count = 0;
       for (let j = 0; j < childs.length; j += 1) {
-        if (childs[j].tagName === 'LI') { count += 1; }
+        if (childs[j].tagName === 'LI') {
+          count += 1;
+        }
       }
       const placeholder = count + (count > 1 ? ' items' : ' item');
 
@@ -245,11 +255,11 @@ function ToggleEventListener(event) {
     }
     t = t.parentNode;
   }
-};
+}
 
 // Simulate click on toggle button when placeholder is clicked
 function SimulateClickHandler(elm, event) {
-  siblings(elm, 'a.json-toggle', el => fireClick(el));
+  siblings(elm, 'a.json-toggle', (el) => fireClick(el));
 
   event.stopPropagation();
   event.preventDefault();
@@ -276,15 +286,12 @@ function PickPathHandler(elm) {
     const { keyType } = $parentsList[i].dataset;
 
     if (
-      keyType === 'object'
-      && typeof key !== 'number'
-      && options.processKeys
-      && options.keyReplaceRegexPattern !== undefined
+      keyType === 'object' &&
+      typeof key !== 'number' &&
+      options.processKeys &&
+      options.keyReplaceRegexPattern !== undefined
     ) {
-      const keyReplaceRegex = new RegExp(
-        options.keyReplaceRegexPattern,
-        options.keyReplaceRegexFlags,
-      );
+      const keyReplaceRegex = new RegExp(options.keyReplaceRegexPattern, options.keyReplaceRegexFlags);
       const keyReplacementText = options.keyReplacementText === undefined ? '' : options.keyReplacementText;
       key = key.replace(keyReplaceRegex, keyReplacementText);
     }
@@ -297,7 +304,7 @@ function PickPathHandler(elm) {
 
   const quotes = {
     none: '',
-    single: '\'',
+    single: "'",
     double: '"',
   };
 
@@ -309,9 +316,11 @@ function PickPathHandler(elm) {
 
     if (segment.keyType === 'array' || segment.isKeyANumber) {
       return `[${segment.key}]`;
-    } if (isBracketsNotation || isKeyForbiddenInDotNotation) {
+    }
+    if (isBracketsNotation || isKeyForbiddenInDotNotation) {
       return `[${quote}${segment.key}${quote}]`;
-    } if (idx > 0) {
+    }
+    if (idx > 0) {
       return `.${segment.key}`;
     }
     return segment.key;
@@ -338,9 +347,9 @@ function PickEventListener(event) {
 // Uniq id generator
 function uuidv4() {
   function randomString(length, chars) {
-      var result = '';
-      for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
-      return result;
+    var result = '';
+    for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+    return result;
   }
   return randomString(32, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
 }
@@ -399,7 +408,7 @@ function jsonPathPicker(source, json, target, opt) {
   } else {
     // Remove every picker icon
     const sourceSelector = source.getAttribute('data-jsonpath-uniq-id'); // Prevent affect other jp-picker
-    document.querySelectorAll(`[id*='${sourceSelector}'] .pick-path`).forEach(el => el.parentNode.removeChild(el));
+    document.querySelectorAll(`[id*='${sourceSelector}'] .pick-path`).forEach((el) => el.parentNode.removeChild(el));
   }
 
   if (options.outputCollapsed === true) {
@@ -428,5 +437,5 @@ function clearJsonPathPicker(source) {
 
 module.exports = {
   jsonPathPicker,
-  clearJsonPathPicker
-}
+  clearJsonPathPicker,
+};

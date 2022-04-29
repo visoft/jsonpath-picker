@@ -76,7 +76,12 @@ function json2html(json, options) {
       for (var key in json) {
         if (json.hasOwnProperty(key)) {
           html += "<li data-key-type=\"object\" data-key=\"".concat(key, "\">");
-          var keyRepr = options.outputWithQuotes ? "<span class=\"json-string\">\"".concat(key, "\"</span>") : key; // Add toggle button if item is collapsable
+          var keyRepr = key; // Quote keys if needed
+
+          if (options.outputWithQuotes) {
+            keyRepr = options.wrapOutputAsStrings ? "<span class=\"json-string\">\"".concat(key, "\"</span>") : "\"".concat(key, "\"");
+          } // Add toggle button if item is collapsable
+
 
           if (isCollapsable(json[key])) {
             html += "<a href class=\"json-toggle\">".concat(keyRepr, "</a>");
@@ -282,9 +287,8 @@ function ToggleEventListener(event) {
 
     t = t.parentNode;
   }
-}
+} // Simulate click on toggle button when placeholder is clicked
 
-; // Simulate click on toggle button when placeholder is clicked
 
 function SimulateClickHandler(elm, event) {
   siblings(elm, 'a.json-toggle', function (el) {
@@ -332,7 +336,7 @@ function PickPathHandler(elm) {
 
   var quotes = {
     none: '',
-    single: '\'',
+    single: "'",
     "double": '"'
   };
   var quote = quotes[options.pathQuotesType];

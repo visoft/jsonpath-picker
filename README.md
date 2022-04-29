@@ -17,9 +17,9 @@ JSON path picker can be also used in your app. Core features are packed as jQuer
 - Clickable links
 - Easily readable and minimal DOM structure
 - Path picking:
-  * Two path notations
-  * Three quote styles
-  * Key processing possibility (using `RegExp`)
+  - Two path notations
+  - Three quote styles
+  - Key processing possibility (using `RegExp`)
 
 ## Plugin Installation
 
@@ -29,71 +29,71 @@ Import `jsonpath-picker.min.js` and `jsonpath-picker.min.css` in your applicatio
 
 1. Create `pre` element for rendered tree output:
 
-  ```html
-  <pre id="json-renderer"></pre>
-  ```
+```html
+<pre id="json-renderer"></pre>
+```
 
 2. Create path target element:
 
-  ```html
-  <input class="path" type="text">
-  ```
+```html
+<input class="path" type="text" />
+```
 
 3. Call the `render()` method and pass your JSON data and path target element selector as an arguments:
 
-  ```js
-  var data = {
-    "foobar": "foobaz"
-  };
+```js
+var data = {
+  foobar: 'foobaz'
+};
 
-  source = document.querySelector('#json-renderer');
-  dest = document.querySelectorAll('.path');
+source = document.querySelector('#json-renderer');
+dest = document.querySelectorAll('.path');
 
-  // Browser
-  JPPicker.render(source, data, dests);
+// Browser
+JPPicker.render(source, data, dests);
 
-  // Using Node require
-  const JPP = require('jsonpath-picker-vanilla');
-  JPPicker.render(source, data, dests);
-  ```
+// Using Node require
+const JPP = require('jsonpath-picker-vanilla');
+JPPicker.render(source, data, dests);
+```
 
 ## Plugin Options
 
 The `render` method accepts an optional `options` object as a 4th argument.
 
-| Option                     | Type      | Default         | Description                                              |
-|----------------------------|-----------|-----------------|----------------------------------------------------------|
-| outputCollapsed            | boolean   | `false`         | All nodes are collapsed.                                 |
-| outputWithQuotes           | boolean   | `false`         | All keys in output HTML are surrounded with double quotation marks. Eg. `{"foobar": 1}` instead of `{foobar: 1}`.                                                             |
-| pathNotation               | string    | `'dots'`        | Path notation type. Accepts `dots` for dots notation (eg. `example.in.dots.notation`) and `brackets` for brackets notation (eg. `['example']['in']['brackets']['notation']`). |
-| pathQuotesType             | string    | `'single'`      |  |
-| processKeys                | boolean   | `false`         |  |
-| keyReplaceRegexPattern     | string    | `undefined`     |  |
-| keyReplaceRegexFlags       | string    | `undefined`     |  |
-| keyReplacementText         | string    | `''`            |  |
-| pickerIcon | string | `#x1f4cb` | Hexa Unicode for picker Icon |
-| WithoutPicker | boolean | `false` ||
+| Option                 | Type    | Default     | Description                                                                                                                                                                   |
+| ---------------------- | ------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| outputCollapsed        | boolean | `false`     | All nodes are collapsed.                                                                                                                                                      |
+| outputWithQuotes       | boolean | `false`     | All keys in output HTML are surrounded with double quotation marks. Eg. `{"foobar": 1}` instead of `{foobar: 1}`.                                                             |
+| wrapOutputAsStrings    | boolean | `false`     | Along with `outputWithQuotes`, this will wrap output in span with a class of `.json-string`                                                                                   |
+| pathNotation           | string  | `'dots'`    | Path notation type. Accepts `dots` for dots notation (eg. `example.in.dots.notation`) and `brackets` for brackets notation (eg. `['example']['in']['brackets']['notation']`). |
+| pathQuotesType         | string  | `'single'`  |                                                                                                                                                                               |
+| processKeys            | boolean | `false`     |                                                                                                                                                                               |
+| keyReplaceRegexPattern | string  | `undefined` |                                                                                                                                                                               |
+| keyReplaceRegexFlags   | string  | `undefined` |                                                                                                                                                                               |
+| keyReplacementText     | string  | `''`        |                                                                                                                                                                               |
+| pickerIcon             | string  | `#x1f4cb`   | Hexa Unicode for picker Icon                                                                                                                                                  |
+| WithoutPicker          | boolean | `false`     |                                                                                                                                                                               |
 
 Example:
 
 ```js
-
 source = document.querySelector('#json-renderer');
 dest = document.querySelectorAll('.path');
 
 // For Browser
 JPPicker.render(source, data, dest, {
-    outputWithQuotes: true,
-    pathNotation: 'brackets',
-    pathQuotesType: 'double'
+  outputWithQuotes: true,
+  pathNotation: 'brackets',
+  pathQuotesType: 'double'
 });
 
 // Using Node require
 const JPP = require('jsonpath-picker-vanilla');
 JPP.jsonPathPicker(source, data, dest, {
-    outputWithQuotes: true,
-    pathNotation: 'brackets',
-    pathQuotesType: 'double'
+  outputWithQuotes: true,
+  pathNotation: 'brackets',
+  pathQuotesType: 'double'
 });
 ```
 
